@@ -131,3 +131,4 @@ $RECYCLE.BIN/
 .DS_Store
 
 _NCrunch*
+/ALS.API.CRUDGenerator/nupkg/ALS.API.CRUDGenerator.1.0.0.nupkg
