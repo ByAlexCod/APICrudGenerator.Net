@@ -1,0 +1,9 @@
+﻿using System;
+
+namespace {{namespace}}
+{
+    public class {{model_name}}
+    {
+        {{properties}}
+    }
+}

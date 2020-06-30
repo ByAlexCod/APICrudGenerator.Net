@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "ALS.API.CRUDGenerator": {
+      "commandName": "Project",
+      "commandLineArgs": "-c ./conf.json"
+    }
+  }
+}

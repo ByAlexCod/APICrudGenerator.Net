@@ -1,0 +1,4 @@
+﻿create table {{table_name}} (
+	{{columns}}
+	{{constraints}}
+)
