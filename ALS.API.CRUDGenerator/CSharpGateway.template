@@ -1,1 +1,85 @@
-﻿
+﻿using Dapper;
+using IdeasBoard.DAL.Models;
+using System;
+using System.Data.SqlClient;
+using System.Threading.Tasks;
+
+namespace IdeasBoard.DAL
+{
+    public class {{model_name}}Service
+    {
+        private readonly string _connectionString;
+
+        public {{model_name}}Service(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
+        public async Task<int> Find{{model_name}}({{model_name}} model)
+        {
+            using (var con = new SqlConnection(_connectionString))
+            {
+                int likeId = await con.QueryFirstOrDefaultAsync<int>(
+                    @"select * from ib.idea_likes where UserId = @userId and IdeaId = @ideaId ",
+                    new { userId = model.UserId, ideaId = model.IdeaId });
+                
+                return likeId;
+            } 
+        }
+
+        public async Task<int> Get{{model_name}}Number(int ideaId)
+        {
+            using(var con = new SqlConnection(_connectionString))
+            {
+                int likeNumber = await con.QueryFirstOrDefaultAsync<int>(
+                    @"select count(*) from ib.idea_likes l where l.UserId<> 0 and l.IdeaId = @IdeaId",
+                    new {IdeaId = ideaId });
+
+                return likeNumber;
+            }
+        }
+
+        public async Task<bool> Createlike({{model_name}} model)
+        {
+            using(var con  = new SqlConnection(_connectionString))
+            {
+
+                await con.QueryAsync(
+                    @"insert into ib.idea_likes (UserId, IdeaId) values (@userId, @ideaId);",
+                    new { userId = model.UserId, ideaId = model.IdeaId });
+                return true;
+            }
+        }
+
+        public async Task<bool> Unlike (int likeId)
+        {
+            using(var con = new SqlConnection(_connectionString))
+            {
+                await con.QueryAsync(
+
+                    @"delete from ib.idea_likes where {{model_name}}Id = @likeId;",
+                    new {likeId});
+
+                return true;
+            }
+        }
+
+        public async Task<bool> Update({{model_name}} model)
+        {
+            model.{{model_name}}Id = await Find{{model_name}}(model);
+
+            /*if the like doesn't exist, it likeId is equal to 0 
+           */
+            if (model.{{model_name}}Id != 0)
+            {
+               await Unlike(model.{{model_name}}Id);
+            }
+            else
+            {
+                await Createlike(model);
+            }
+                return true;
+
+        }
+    }
+}
