@@ -6,8 +6,8 @@
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>csgen</ToolCommandName>
     <PackageOutputPath>./nupkg</PackageOutputPath>
-
-  </PropertyGroup>
+    <Version>1.0.1</Version>
+    </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Utility.CommandLine.Arguments" Version="4.0.0" />
