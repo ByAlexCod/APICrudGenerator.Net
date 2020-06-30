@@ -31,4 +31,4 @@ jobs:
         # NuGet package id, used for version detection & defaults to project name
         PACKAGE_NAME: ALS.API.CRUDGenerator
         NUGET_KEY: oy2oadg7hqxorvsxc26qrjxvf6loclruhld54nxenl3f7e    
-        VERSION_STATIC: # optional:  1.0.1
+        VERSION_STATIC: 1.0.1
