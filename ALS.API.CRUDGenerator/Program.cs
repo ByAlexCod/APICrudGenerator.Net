@@ -37,7 +37,7 @@ namespace ALS.API.CRUDGenerator
 
                 Console.WriteLine("Model name:");
                 var modelName = Console.ReadLine();
-
+                Sep();
                 Dictionary<string, GenericTypeMapping> fields = new Dictionary<string, GenericTypeMapping>();
                 while (true)
                 {
@@ -57,7 +57,7 @@ namespace ALS.API.CRUDGenerator
 
                     fields.Add(entry, GenericTypeMapping.GetTypesMapping()[userEntryType]);
                     Console.WriteLine("Field added");
-                    Console.WriteLine("=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=");
+                    Sep();
                 }
 
                 CreateTable(modelName, fields);
@@ -70,7 +70,7 @@ namespace ALS.API.CRUDGenerator
             Configuration conf = new Configuration();
             foreach (var field in typeof(Configuration).GetProperties())
             {
-                Console.WriteLine($"Set {field.Name}");
+                Console.WriteLine($"Value of {CamelCaseToSpaces(field.Name)}:");
                 var stringResult = Console.ReadLine();
                 field.SetValue(conf, Convert.ChangeType(stringResult, field.PropertyType), null);
             }
@@ -113,11 +113,11 @@ namespace ALS.API.CRUDGenerator
             var constraints = new List<string>();
             constraints.Add($"PRIMARY KEY({selectedPrimaries})");
 
-            template = template.Replace("{{columns}}", Join(",\n", fieldLines));
+            template = template.Replace("{{columns}}", Join(",\t\n", fieldLines));
             template = template.Replace("{{constraints}}", Join(",\n", constraints));
             
             File.WriteAllText(Path.Join(conf.DbMigrationPath, 
-                GenerateNextFileName(Directory.GetFiles(conf.DbMigrationPath).Select(Path.GetFileName).ToList(), modelName))+".sql", 
+                GenerateNextFileName(Directory.GetFiles(conf.DbMigrationPath).Select(Path.GetFileName).ToList(), modelName)), 
                 template);
             Console.WriteLine(template);
 
@@ -137,25 +137,34 @@ namespace ALS.API.CRUDGenerator
             var template = File.ReadAllText(_csharpModelTemplatePath);
             template = template.Replace("{{namespace}}", conf.ModelNameSpace);
             template = template.Replace("{{model_name}}", modelName);
-
-            template = template.Replace("{{properties}}", Join("\n", lines));
+            template = template.Replace("{{properties}}", Join("\t\t\n", lines));
 
             File.WriteAllText(modelPath, template);
         }
 
         private static string GenerateNextFileName(List<string> files, string baseName)
         {
-            files.Sort();
-            var last = files[^1];
-            var name = baseName;
-            var lastId = 0;
-            while(Compare(last, name, StringComparison.InvariantCulture) > 0)
+
+            Console.WriteLine("What should be the name of the SQL File ? Existing SQL Files: \n" + string.Join("\n\t", files));
+            
+            return Console.ReadLine();
+        }
+
+        private static string CamelCaseToSpaces(string text)
+        {
+            string result = "";
+            foreach (var c in text)
             {
-                name = lastId + "-" + baseName;
-                lastId++;
+                if (char.IsUpper(c)) result += " ";
+                result += c;
             }
 
-            return name;
+            return result;
+        }
+
+        private static void Sep()
+        {
+            Console.WriteLine("---------------------------------------");
         }
     }
 }
